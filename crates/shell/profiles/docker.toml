@@ -1,0 +1,14 @@
+[meta]
+name = "docker"
+description = "Docker build and run"
+
+[network]
+allow = ["registry-1.docker.io", "*.docker.io", "auth.docker.io", "production.cloudflare.docker.com", "github.com"]
+
+[filesystem]
+allow_write = [".", "/tmp", "/var/run/docker.sock"]
+deny_read = ["~/.aws", "~/.ssh", "~/.gnupg", ".env", ".env.*", "*.pem", "*.key"]
+
+[env]
+scrub = ["*_KEY", "*_SECRET", "*_TOKEN", "*_PASSWORD", "DATABASE_URL"]
+pass = ["PATH", "HOME", "USER", "SHELL", "TERM", "DOCKER_*", "CI"]

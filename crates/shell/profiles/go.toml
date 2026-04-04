@@ -1,0 +1,14 @@
+[meta]
+name = "go"
+description = "Go modules and build"
+
+[network]
+allow = ["proxy.golang.org", "sum.golang.org", "storage.googleapis.com", "github.com", "*.githubusercontent.com"]
+
+[filesystem]
+allow_write = ["./vendor", "~/go/pkg", "/tmp"]
+deny_read = ["~/.aws", "~/.ssh", "~/.gnupg", ".env", ".env.*", "*.pem", "*.key"]
+
+[env]
+scrub = ["*_KEY", "*_SECRET", "*_TOKEN", "*_PASSWORD", "DATABASE_URL"]
+pass = ["PATH", "HOME", "USER", "SHELL", "TERM", "LANG", "LC_*", "GOPATH", "GOROOT", "GOPROXY", "GO*", "CI"]

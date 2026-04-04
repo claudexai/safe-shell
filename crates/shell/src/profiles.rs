@@ -4,13 +4,13 @@ use safe_shell_scanner::config::{
 };
 use std::collections::HashMap;
 
-const NPM_TOML: &str = include_str!("../../../profiles/npm.toml");
-const PIP_TOML: &str = include_str!("../../../profiles/pip.toml");
-const CARGO_TOML: &str = include_str!("../../../profiles/cargo.toml");
-const GO_TOML: &str = include_str!("../../../profiles/go.toml");
-const DOCKER_TOML: &str = include_str!("../../../profiles/docker.toml");
-const TERRAFORM_TOML: &str = include_str!("../../../profiles/terraform.toml");
-const MINIMAL_TOML: &str = include_str!("../../../profiles/minimal.toml");
+const NPM_TOML: &str = include_str!("../profiles/npm.toml");
+const PIP_TOML: &str = include_str!("../profiles/pip.toml");
+const CARGO_TOML: &str = include_str!("../profiles/cargo.toml");
+const GO_TOML: &str = include_str!("../profiles/go.toml");
+const DOCKER_TOML: &str = include_str!("../profiles/docker.toml");
+const TERRAFORM_TOML: &str = include_str!("../profiles/terraform.toml");
+const MINIMAL_TOML: &str = include_str!("../profiles/minimal.toml");
 
 const BUILTIN_NAMES: &[&str] = &[
     "npm",

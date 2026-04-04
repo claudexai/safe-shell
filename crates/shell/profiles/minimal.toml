@@ -1,0 +1,14 @@
+[meta]
+name = "minimal"
+description = "Maximum isolation — no network, no secrets, project dir only"
+
+[network]
+allow = []
+
+[filesystem]
+allow_write = [".", "/tmp"]
+deny_read = ["~/.aws", "~/.ssh", "~/.gnupg", "~/.config/gcloud", "~/.azure", "~/.docker", "~/.kube", "~/.npmrc", ".env", ".env.*", "*.pem", "*.key", "*.p12", "*.pfx", "*.jks", "*.keystore", "*.tfvars", "*.tfstate", "credentials.json", "secrets.*", "service-account*.json", "*.kdbx", "*.kdb"]
+
+[env]
+scrub = ["*_KEY", "*_SECRET", "*_TOKEN", "*_PASSWORD", "*_CREDENTIAL", "DATABASE_URL", "MONGO*_URI", "REDIS_URL", "STRIPE_*", "ANTHROPIC_*", "OPENAI_*"]
+pass = ["PATH", "HOME", "USER", "SHELL", "TERM", "LANG", "LC_*"]

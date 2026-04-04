@@ -1,0 +1,17 @@
+[meta]
+name = "terraform"
+description = "Terraform init and plan (not apply)"
+
+[network]
+allow = ["registry.terraform.io", "releases.hashicorp.com", "*.amazonaws.com", "github.com"]
+
+[filesystem]
+allow_write = ["./.terraform", "./.terraform.lock.hcl", "/tmp"]
+deny_read = ["~/.ssh", "~/.gnupg", "*.pem", "*.key"]
+# NOTE: ~/.aws is NOT denied because terraform needs cloud creds
+# Use --deny-read "~/.aws" explicitly if you want to block it
+
+[env]
+scrub = ["*_PASSWORD", "DATABASE_URL"]
+# NOTE: AWS_*, GOOGLE_*, ARM_* are NOT scrubbed — terraform needs them
+pass = ["PATH", "HOME", "USER", "SHELL", "TERM", "LANG", "LC_*", "AWS_*", "GOOGLE_*", "ARM_*", "TF_*", "TERRAFORM_*", "CI"]

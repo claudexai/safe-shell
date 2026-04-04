@@ -4,6 +4,8 @@ description = "Run any command in a secret-aware OS-level sandbox"
 version.workspace = true
 edition.workspace = true
 license.workspace = true
+repository.workspace = true
+readme = "../../README.md"
 
 [[bin]]
 name = "safe-shell"

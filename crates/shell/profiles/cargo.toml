@@ -1,0 +1,14 @@
+[meta]
+name = "cargo"
+description = "Rust package manager and build tool"
+
+[network]
+allow = ["crates.io", "*.crates.io", "index.crates.io", "static.crates.io", "github.com", "*.githubusercontent.com"]
+
+[filesystem]
+allow_write = ["./target", "~/.cargo", "/tmp"]
+deny_read = ["~/.aws", "~/.ssh", "~/.gnupg", ".env", ".env.*", "*.pem", "*.key", "credentials.json", "secrets.*"]
+
+[env]
+scrub = ["*_KEY", "*_SECRET", "*_TOKEN", "*_PASSWORD", "DATABASE_URL"]
+pass = ["PATH", "HOME", "USER", "SHELL", "TERM", "LANG", "LC_*", "CARGO_*", "RUST*", "CI"]

@@ -1,0 +1,20 @@
+[meta]
+name = "npm"
+description = "Node.js package manager — install, build, test"
+
+[network]
+allow = [
+  "registry.npmjs.org",
+  "*.npmjs.org",
+  "github.com",
+  "*.githubusercontent.com",
+  "*.github.com",
+]
+
+[filesystem]
+allow_write = ["./node_modules", "./package-lock.json", "./yarn.lock", "./pnpm-lock.yaml", "/tmp", "~/.npm"]
+deny_read = ["~/.aws", "~/.ssh", "~/.gnupg", "~/.config/gcloud", "~/.azure", "~/.docker", "~/.kube", ".env", ".env.*", "*.pem", "*.key", "*.p12", "*.pfx", "*.tfvars", "*.tfstate", "credentials.json", "secrets.*"]
+
+[env]
+scrub = ["*_KEY", "*_SECRET", "*_TOKEN", "*_PASSWORD", "*_CREDENTIAL", "DATABASE_URL", "MONGO*_URI", "REDIS_URL"]
+pass = ["PATH", "HOME", "USER", "SHELL", "TERM", "LANG", "LC_*", "NODE_ENV", "NODE_*", "npm_config_*", "NPM_CONFIG_*", "CI", "GITHUB_ACTIONS", "RUNNER_*"]
