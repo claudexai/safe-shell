@@ -35,7 +35,7 @@ jobs:
         run: cargo build
 
       - name: Run unit tests
-        run: cargo test -p sf-core -p ss-sandbox
+        run: cargo test -p safe-shell-scanner -p safe-shell-sandbox
 
       - name: Run integration tests
         run: |
