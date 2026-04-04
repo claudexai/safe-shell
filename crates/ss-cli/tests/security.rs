@@ -1518,7 +1518,7 @@ fn data_exfil_via_project_dir_modification() {
     let target = dir.path().join("package.json");
     std::fs::write(&target, r#"{"name":"test","version":"1.0.0"}"#).unwrap();
 
-    let output = safe_shell_bin()
+    let _output = safe_shell_bin()
         .current_dir(dir.path())
         .args([
             "exec",

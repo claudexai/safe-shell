@@ -325,7 +325,6 @@ fn shield_npm_install_error_passes_through() {
 fn shield_command_exit_code_passes_through() {
     let output = run_shielded("npm run nonexistent-script 2>&1; echo EXIT=$?");
 
-    let stdout = String::from_utf8_lossy(&output.stdout);
     let combined = format!(
         "{}{}",
         String::from_utf8_lossy(&output.stdout),
