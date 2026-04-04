@@ -6,8 +6,6 @@ edition.workspace = true
 license.workspace = true
 
 [dependencies]
-safe-shell-scanner = { workspace = true }
-thiserror = { workspace = true }
 dirs = { workspace = true }
 which = { workspace = true }
 tokio = { workspace = true }
