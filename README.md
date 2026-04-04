@@ -1,6 +1,6 @@
 # safe-shell
 
-Run any command in a secret-aware OS-level sandbox. Protects against supply chain attacks like the [axios npm compromise](https://www.wiz.io/blog/axios-npm-compromised-in-supply-chain-attack) (March 30, 2026) where a malicious postinstall hook stole credentials, read sensitive files, and phoned home to a C&C server.
+Run any command in a secret-aware OS-level sandbox. Protects against supply chain attacks like the [axios npm compromise](https://www.trendmicro.com/en_us/research/26/c/axios-npm-package-compromised.html) (March 30, 2026) where a malicious postinstall hook stole credentials, read sensitive files, and phoned home to a C&C server.
 
 ![safe-shell demo](demo/demo.gif)
 

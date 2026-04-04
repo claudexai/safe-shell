@@ -462,10 +462,33 @@ version = "0.1.0"
 dependencies = [
  "clap",
  "dirs",
+ "safe-shell-sandbox",
+ "safe-shell-scanner",
  "serde",
- "sf-core",
- "ss-sandbox",
  "tempfile",
+ "toml",
+]
+
+[[package]]
+name = "safe-shell-sandbox"
+version = "0.1.0"
+dependencies = [
+ "dirs",
+ "safe-shell-scanner",
+ "thiserror 2.0.18",
+ "tokio",
+ "which",
+]
+
+[[package]]
+name = "safe-shell-scanner"
+version = "0.1.0"
+dependencies = [
+ "dirs",
+ "glob",
+ "regex",
+ "serde",
+ "thiserror 2.0.18",
  "toml",
 ]
 
@@ -528,18 +551,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "sf-core"
-version = "0.1.0"
-dependencies = [
- "dirs",
- "glob",
- "regex",
- "serde",
- "thiserror 2.0.18",
- "toml",
-]
-
-[[package]]
 name = "socket2"
 version = "0.6.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -547,17 +558,6 @@ checksum = "3a766e1110788c36f4fa1c2b71b387a7815aa65f88ce0229841826633d93723e"
 dependencies = [
  "libc",
  "windows-sys 0.61.2",
-]
-
-[[package]]
-name = "ss-sandbox"
-version = "0.1.0"
-dependencies = [
- "dirs",
- "sf-core",
- "thiserror 2.0.18",
- "tokio",
- "which",
 ]
 
 [[package]]

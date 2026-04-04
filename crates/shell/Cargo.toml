@@ -10,8 +10,8 @@ name = "safe-shell"
 path = "src/main.rs"
 
 [dependencies]
-sf-core = { workspace = true }
-ss-sandbox = { workspace = true }
+safe-shell-scanner = { workspace = true }
+safe-shell-sandbox = { workspace = true }
 clap = { workspace = true }
 serde = { workspace = true }
 toml = { workspace = true }

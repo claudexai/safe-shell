@@ -1,6 +1,6 @@
 [package]
-name = "sf-core"
-description = "Shared secret detection engine for safe-shell and secret-fence"
+name = "safe-shell-scanner"
+description = "Secret detection engine — env scrubbing, regex rules, path scanning"
 version.workspace = true
 edition.workspace = true
 license.workspace = true

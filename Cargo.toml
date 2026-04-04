@@ -1,5 +1,5 @@
 [workspace]
-members = ["crates/sf-core", "crates/ss-sandbox", "crates/ss-cli"]
+members = ["crates/scanner", "crates/sandbox", "crates/shell"]
 resolver = "2"
 
 [workspace.package]
@@ -31,5 +31,5 @@ tokio = { version = "1", features = ["rt-multi-thread", "net", "io-util", "macro
 thiserror = "2"
 
 # Internal crates
-sf-core = { path = "crates/sf-core" }
-ss-sandbox = { path = "crates/ss-sandbox" }
+safe-shell-scanner = { path = "crates/scanner" }
+safe-shell-sandbox = { path = "crates/sandbox" }

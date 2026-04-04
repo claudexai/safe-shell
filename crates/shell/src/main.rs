@@ -53,9 +53,10 @@ fn run_exec(args: cli::ExecArgs) -> Result<i32, Box<dyn std::error::Error>> {
     let scrub_patterns = env_config.map(|e| e.scrub.as_slice()).unwrap_or(&[]);
     let pass_patterns = env_config.map(|e| e.pass.as_slice()).unwrap_or(&[]);
 
-    let scanner = sf_core::Scanner::new();
+    let scanner = safe_shell_scanner::Scanner::new();
     let current_env: std::collections::HashMap<String, String> = std::env::vars().collect();
-    let clean_env = sf_core::scrub_env(&current_env, scrub_patterns, pass_patterns, &scanner);
+    let clean_env =
+        safe_shell_scanner::scrub_env(&current_env, scrub_patterns, pass_patterns, &scanner);
 
     let scrubbed_count = current_env.len() - clean_env.len();
 
@@ -63,7 +64,7 @@ fn run_exec(args: cli::ExecArgs) -> Result<i32, Box<dyn std::error::Error>> {
     let fs_config = profile.filesystem.as_ref();
     let net_config = profile.network.as_ref();
 
-    let sandbox_config = ss_sandbox::SandboxConfig {
+    let sandbox_config = safe_shell_sandbox::SandboxConfig {
         command: args.command.clone(),
         env: clean_env,
         cwd: std::env::current_dir()?,
@@ -153,7 +154,7 @@ fn run_exec(args: cli::ExecArgs) -> Result<i32, Box<dyn std::error::Error>> {
         eprintln!();
     }
 
-    let result = ss_sandbox::execute_with_config(&sandbox_config)?;
+    let result = safe_shell_sandbox::execute_with_config(&sandbox_config)?;
 
     // Session summary
     if !args.quiet {
@@ -199,7 +200,7 @@ fn print_profile_list() {
     println!("Details: safe-shell profiles <NAME>");
 }
 
-fn print_profile_details(name: &str, profile: &sf_core::config::Profile) {
+fn print_profile_details(name: &str, profile: &safe_shell_scanner::config::Profile) {
     println!();
     if let Some(ref meta) = profile.meta {
         if let Some(ref desc) = meta.description {
@@ -269,7 +270,11 @@ fn print_wrapped(label: &str, items: &[String]) {
     println!();
 }
 
-fn print_dry_run(command: &str, profile_name: Option<&str>, profile: &sf_core::config::Profile) {
+fn print_dry_run(
+    command: &str,
+    profile_name: Option<&str>,
+    profile: &safe_shell_scanner::config::Profile,
+) {
     println!("safe-shell dry run:");
     println!("  Command: {command}");
     if let Some(name) = profile_name {
@@ -282,9 +287,10 @@ fn print_dry_run(command: &str, profile_name: Option<&str>, profile: &sf_core::c
     let scrub_patterns = env_config.map(|e| e.scrub.as_slice()).unwrap_or(&[]);
     let pass_patterns = env_config.map(|e| e.pass.as_slice()).unwrap_or(&[]);
 
-    let scanner = sf_core::Scanner::new();
+    let scanner = safe_shell_scanner::Scanner::new();
     let current_env: std::collections::HashMap<String, String> = std::env::vars().collect();
-    let clean_env = sf_core::scrub_env(&current_env, scrub_patterns, pass_patterns, &scanner);
+    let clean_env =
+        safe_shell_scanner::scrub_env(&current_env, scrub_patterns, pass_patterns, &scanner);
 
     let scrubbed_count = current_env.len() - clean_env.len();
     let scrubbed_keys: Vec<&String> = current_env

@@ -1,12 +1,12 @@
 [package]
-name = "ss-sandbox"
-description = "OS-level isolation for safe-shell (Seatbelt on macOS)"
+name = "safe-shell-sandbox"
+description = "OS-level isolation — Seatbelt sandbox, domain-filtering proxy"
 version.workspace = true
 edition.workspace = true
 license.workspace = true
 
 [dependencies]
-sf-core = { workspace = true }
+safe-shell-scanner = { workspace = true }
 thiserror = { workspace = true }
 dirs = { workspace = true }
 which = { workspace = true }

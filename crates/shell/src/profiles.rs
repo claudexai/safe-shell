@@ -1,4 +1,4 @@
-use sf_core::config::{
+use safe_shell_scanner::config::{
     parse_custom_profiles, CustomProfileEntry, EnvConfig, FilesystemConfig, GlobalConfig,
     NetworkConfig, Profile,
 };
@@ -266,7 +266,7 @@ pub fn load_shield_mappings() -> (Vec<ShieldMapping>, Vec<String>) {
     let mut warnings = Vec::new();
 
     // Load config aliases
-    use sf_core::config::ShieldAlias;
+    use safe_shell_scanner::config::ShieldAlias;
     let aliases: HashMap<String, ShieldAlias> = load_global_config_raw()
         .and_then(|c| c.shield)
         .and_then(|s| s.aliases)
