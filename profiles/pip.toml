@@ -1,0 +1,14 @@
+[meta]
+name = "pip"
+description = "Python package manager"
+
+[network]
+allow = ["pypi.org", "*.pypi.org", "files.pythonhosted.org", "*.pythonhosted.org"]
+
+[filesystem]
+allow_write = ["./venv", "./.venv", "./env", "./__pycache__", "./build", "./dist", "./*.egg-info", "/tmp"]
+deny_read = ["~/.aws", "~/.ssh", "~/.gnupg", ".env", ".env.*", "*.pem", "*.key", "credentials.json", "secrets.*"]
+
+[env]
+scrub = ["*_KEY", "*_SECRET", "*_TOKEN", "*_PASSWORD", "DATABASE_URL"]
+pass = ["PATH", "HOME", "USER", "SHELL", "TERM", "LANG", "LC_*", "VIRTUAL_ENV", "PYTHONPATH", "PYTHON*", "PIP_*", "CI"]

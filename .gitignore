@@ -1,0 +1,30 @@
+# Build artifacts
+/target/
+**/target/
+
+# Editor/IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Project plan (internal only)
+/project-plan/
+
+# npm artifacts (from manual testing)
+node_modules/
+package-lock.json
+
+# Recordings
+*.cast
+
+# Environment / secrets
+.env
+.env.*
+*.pem
+*.key
