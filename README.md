@@ -415,12 +415,12 @@ cargo fmt --check   # format check
 ```
 safe-shell/
 ├── crates/
-│   ├── sf-core/        # Secret detection engine (shared with secret-fence)
-│   ├── ss-sandbox/     # OS-level isolation (Seatbelt, proxy)
-│   └── ss-cli/         # CLI binary
+│   ├── scanner/        # safe-shell-scanner — secret detection, env scrubbing
+│   ├── sandbox/        # safe-shell-sandbox — Seatbelt, proxy, OS isolation
+│   └── shell/          # safe-shell — CLI binary
 ├── profiles/           # Built-in TOML profiles (embedded in binary)
 ├── demo/               # Attack simulation scripts
-└── tests/
+└── .github/workflows/  # CI pipeline
 ```
 
 ## License
