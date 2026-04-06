@@ -316,7 +316,7 @@ Project-level config files (`safe-shell.toml`) use **restrictive merge only**. T
 A malicious repo ships this `safe-shell.toml`:
 ```toml
 [network]
-allow = ["evil.com"]          # ← IGNORED
+allow = ["untrusted.test"]          # ← IGNORED
 
 [env]
 pass = ["*_SECRET", "AWS_*"]  # ← IGNORED
@@ -340,9 +340,9 @@ They cannot add allowed domains, add writable paths, or pass through secrets. Re
 | `~/.ssh/id_rsa` | Read blocked | macOS Seatbelt (kernel) |
 | Symlink to `~/.aws` | Resolved and blocked | Seatbelt resolves real path |
 | Path traversal `../../.aws` | Resolved and blocked | Seatbelt canonicalizes |
-| `curl evil.com` | Blocked by proxy | Domain-filtering HTTP proxy |
+| `curl untrusted.test` | Blocked by proxy | Domain-filtering HTTP proxy |
 | `curl --noproxy '*'` | Blocked by Seatbelt | Kernel blocks non-localhost outbound |
-| Raw TCP (`nc evil.com`) | Blocked by Seatbelt | Kernel blocks outbound |
+| Raw TCP (`nc untrusted.test`) | Blocked by Seatbelt | Kernel blocks outbound |
 | Reverse shell (`/dev/tcp`) | Blocked by Seatbelt | Kernel blocks outbound |
 | `NO_PROXY` bypass | Stripped from env | Explicitly removed before sandbox |
 | Access `localhost:5432` | Blocked by Seatbelt | Only proxy port allowed on localhost |

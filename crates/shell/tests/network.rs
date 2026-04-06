@@ -34,7 +34,7 @@ fn npm_blocks_unauthorized_domain() {
             "exec",
             "--profile",
             "npm",
-            "curl -m 5 -s http://evil.com 2>&1",
+            "curl -m 5 -s http://untrusted.test 2>&1",
         ])
         .output()
         .unwrap();
@@ -44,7 +44,7 @@ fn npm_blocks_unauthorized_domain() {
     let combined = format!("{stdout}{stderr}");
     assert!(
         combined.contains("Network blocked") || combined.contains("blocked network"),
-        "npm profile should block evil.com. Got: {combined}"
+        "npm profile should block untrusted.test. Got: {combined}"
     );
 }
 
@@ -87,14 +87,14 @@ fn npm_allows_github() {
 }
 
 #[test]
-fn npm_blocks_sfrclak_attack_domain() {
-    // The actual C&C domain from the axios attack
+fn npm_blocks_unallowed_domain() {
+    // Verify unallowed domains are blocked
     let output = safe_shell_bin()
         .args([
             "exec",
             "--profile",
             "npm",
-            "curl -m 5 -s http://sfrclak.com:8000 2>&1",
+            "curl -m 5 -s http://blocked.test:8000 2>&1",
         ])
         .output()
         .unwrap();
@@ -104,7 +104,7 @@ fn npm_blocks_sfrclak_attack_domain() {
     let combined = format!("{stdout}{stderr}");
     assert!(
         combined.contains("Network blocked") || combined.contains("blocked network"),
-        "npm profile should block sfrclak.com. Got: {combined}"
+        "npm profile should block blocked.test. Got: {combined}"
     );
 }
 
@@ -130,7 +130,7 @@ fn all_three_layers_combined() {
             "exec",
             "--profile",
             "npm",
-            "echo ENV=$AWS_SECRET_ACCESS_KEY && cat ~/.aws/credentials 2>&1 || echo FS_BLOCKED && curl -m 5 -s http://sfrclak.com:8000 2>&1 || echo NET_BLOCKED",
+            "echo ENV=$AWS_SECRET_ACCESS_KEY && cat ~/.aws/credentials 2>&1 || echo FS_BLOCKED && curl -m 5 -s http://blocked.test:8000 2>&1 || echo NET_BLOCKED",
         ])
         .env("AWS_SECRET_ACCESS_KEY", "supersecret")
         .output()

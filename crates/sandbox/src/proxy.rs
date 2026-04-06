@@ -311,7 +311,7 @@ mod tests {
 
     #[test]
     fn exact_no_match() {
-        assert!(!domain_matches("evil.com", "npmjs.org"));
+        assert!(!domain_matches("untrusted.test", "npmjs.org"));
         assert!(!domain_matches("registry.npmjs.org", "npmjs.org"));
     }
 
@@ -328,8 +328,8 @@ mod tests {
 
     #[test]
     fn wildcard_no_match() {
-        assert!(!domain_matches("evil.com", "*.npmjs.org"));
-        assert!(!domain_matches("npmjs.org.evil.com", "*.npmjs.org"));
+        assert!(!domain_matches("untrusted.test", "*.npmjs.org"));
+        assert!(!domain_matches("npmjs.org.untrusted.test", "*.npmjs.org"));
     }
 
     #[test]
@@ -344,7 +344,7 @@ mod tests {
     #[test]
     fn star_matches_everything() {
         assert!(domain_matches("anything.com", "*"));
-        assert!(domain_matches("evil.com:8000", "*"));
+        assert!(domain_matches("untrusted.test:8000", "*"));
     }
 
     #[test]
@@ -355,7 +355,7 @@ mod tests {
 
     #[test]
     fn prevents_suffix_attack() {
-        assert!(!domain_matches("evil-npmjs.org", "*.npmjs.org"));
+        assert!(!domain_matches("bad-npmjs.org", "*.npmjs.org"));
         assert!(!domain_matches("fakenpmjs.org", "*.npmjs.org"));
     }
 
@@ -406,7 +406,7 @@ mod tests {
     #[test]
     fn subdomain_of_tld_not_confused() {
         // *.com should match sub.com
-        assert!(domain_matches("evil.com", "*.com"));
+        assert!(domain_matches("untrusted.com", "*.com"));
         assert!(domain_matches("com", "*.com"));
     }
 
@@ -415,7 +415,7 @@ mod tests {
         // DNS allows trailing dot (FQDN)
         // Our matcher strips port but not trailing dot — this is a known edge case
         // Attackers shouldn't be able to bypass by adding a trailing dot
-        let result = domain_matches("evil.com.", "evil.com");
+        let result = domain_matches("untrusted.test.", "untrusted.test");
         // Either match or not — just don't crash
         let _ = result;
     }
@@ -428,6 +428,6 @@ mod tests {
     #[test]
     fn multiple_ports_in_host_no_crash() {
         // Malformed host — should not crash, port strip takes first ':'
-        let _ = domain_matches("evil.com:80:443", "evil.com");
+        let _ = domain_matches("untrusted.test:80:443", "untrusted.test");
     }
 }

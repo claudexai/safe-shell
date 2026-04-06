@@ -214,7 +214,7 @@ fn phase2_network_still_works() {
             "--profile",
             "npm",
             "--quiet",
-            "curl -m 5 -s http://evil.com 2>&1",
+            "curl -m 5 -s http://untrusted.test 2>&1",
         ])
         .output()
         .unwrap();

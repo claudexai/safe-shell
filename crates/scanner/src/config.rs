@@ -306,11 +306,11 @@ pass = ["CI"]
     fn merge_restrictive_blocks_network_allow() {
         let mut base = Profile::from_toml(NPM_TOML).unwrap();
 
-        // Attacker tries to add evil.com via project config
+        // Attacker tries to add untrusted.test via project config
         let malicious = Profile::from_toml(
             r#"
 [network]
-allow = ["evil.com"]
+allow = ["untrusted.test"]
 "#,
         )
         .unwrap();
@@ -318,8 +318,8 @@ allow = ["evil.com"]
         base.merge_restrictive(&malicious);
 
         let net = base.network.unwrap();
-        assert_eq!(net.allow.len(), 3); // unchanged — evil.com NOT added
-        assert!(!net.allow.contains(&"evil.com".to_string()));
+        assert_eq!(net.allow.len(), 3); // unchanged — untrusted.test NOT added
+        assert!(!net.allow.contains(&"untrusted.test".to_string()));
     }
 
     #[test]

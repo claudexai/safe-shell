@@ -506,6 +506,12 @@ fn run_unshield() -> Result<i32, Box<dyn std::error::Error>> {
         home.join(".bashrc")
     };
 
+    // Delete the cached hooks file so stale functions aren't re-sourced
+    let cache_file = home.join(".cache/safe-shell/hooks.sh");
+    if cache_file.exists() {
+        let _ = std::fs::remove_file(&cache_file);
+    }
+
     if !config_path.exists() {
         println!("safe-shell shield is not active.");
         return Ok(0);
@@ -531,10 +537,6 @@ fn run_unshield() -> Result<i32, Box<dyn std::error::Error>> {
 
     println!("safe-shell shield deactivated.");
     println!("  Removed from {}", config_path.display());
-    println!(
-        "  Restart your shell or run: source {}",
-        config_path.display()
-    );
 
     Ok(0)
 }

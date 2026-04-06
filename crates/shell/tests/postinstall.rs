@@ -121,7 +121,7 @@ fn network_filtered_during_install() {
             "--profile",
             "npm",
             "--quiet",
-            "curl -m 3 -s http://evil.com 2>&1",
+            "curl -m 3 -s http://untrusted.test 2>&1",
         ])
         .output()
         .unwrap();

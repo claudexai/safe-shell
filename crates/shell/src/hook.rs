@@ -52,6 +52,24 @@ fn generate_posix_hook_from_mappings(mappings: &[ShieldMapping]) -> String {
         hook.push('\n');
     }
 
+    // Generate a safe-shell() wrapper that auto-cleans up on unshield.
+    // A subprocess can't unset functions in the parent shell, so this
+    // wrapper intercepts "safe-shell unshield" and does the cleanup.
+    let all_cmds: Vec<&str> = mappings.iter().map(|m| m.command.as_str()).collect();
+    let unset_list = format!("{} safe-shell", all_cmds.join(" "));
+    hook.push_str(&format!(
+        r#"safe-shell() {{
+  if [ "$1" = "unshield" ]; then
+    command safe-shell unshield
+    unset -f {unset_list} 2>/dev/null
+  else
+    command safe-shell "$@"
+  fi
+}}
+
+"#
+    ));
+
     hook.push_str("# --- end safe-shell shield hooks ---\n");
     hook
 }
@@ -187,6 +205,20 @@ mod tests {
         let line = hook_eval_line("zsh");
         assert!(line.contains("safe-shell hook zsh"));
         assert!(line.contains("source"));
+    }
+
+    #[test]
+    fn unshield_wrapper_cleans_up_functions() {
+        let hook = generate_hook("zsh").unwrap();
+        assert!(hook.contains("safe-shell()"), "should have safe-shell wrapper");
+        assert!(
+            hook.contains("unset -f"),
+            "wrapper should unset hook functions"
+        );
+        assert!(
+            hook.contains("command safe-shell unshield"),
+            "wrapper should call real unshield binary"
+        );
     }
 
     #[test]

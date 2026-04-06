@@ -73,7 +73,7 @@ fn assert_network_blocked(profile: &str) {
             "--profile",
             profile,
             "--quiet",
-            "curl -m 5 -s http://evil.com 2>&1 || echo NET_BLOCKED",
+            "curl -m 5 -s http://untrusted.test 2>&1 || echo NET_BLOCKED",
         ])
         .output()
         .unwrap();
@@ -87,7 +87,7 @@ fn assert_network_blocked(profile: &str) {
             || combined.contains("blocked network")
             || combined.contains("NET_BLOCKED")
             || combined.contains("Could not resolve"),
-        "{profile}: evil.com not blocked. Got: {combined}"
+        "{profile}: untrusted.test not blocked. Got: {combined}"
     );
 }
 
