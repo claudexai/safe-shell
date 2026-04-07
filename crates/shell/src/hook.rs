@@ -210,7 +210,10 @@ mod tests {
     #[test]
     fn unshield_wrapper_cleans_up_functions() {
         let hook = generate_hook("zsh").unwrap();
-        assert!(hook.contains("safe-shell()"), "should have safe-shell wrapper");
+        assert!(
+            hook.contains("safe-shell()"),
+            "should have safe-shell wrapper"
+        );
         assert!(
             hook.contains("unset -f"),
             "wrapper should unset hook functions"
